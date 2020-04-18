@@ -5,6 +5,8 @@
 class = require "lib.class"
 vector = require "lib.vector"
 
+require "class.tilemap"
+
 -- set scaling rules
 love.graphics.setDefaultFilter("nearest", "nearest")
 
@@ -26,8 +28,10 @@ end
 -------------------------------------------------------------------------------
 -- GAME CALLBACKS
 -------------------------------------------------------------------------------
+local testmap
 function love.load()
 	updateCanvasScale()
+	testmap = Tilemap("maps/testmap.lua", Atlas("gfx/tiles.png", 16))
 end
 
 function love.update(dt)
@@ -35,12 +39,19 @@ function love.update(dt)
 end
 
 function love.draw()
+	-- draw to the canvas
+	love.graphics.setCanvas(nativeCanvas)
+		testmap:draw(0, 0)
+	love.graphics.setCanvas()
+
+	-- scale the canvas to match the window scale
 	love.graphics.push()
 		love.graphics.scale(canvasScale)
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.draw(nativeCanvas, 0, 0)
 	love.graphics.pop()
 
+	-- debug stuff
 	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.print(love.timer.getFPS(), 11, 11)
 	love.graphics.setColor(1, 1, 1, 1)
