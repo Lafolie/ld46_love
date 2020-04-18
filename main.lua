@@ -48,19 +48,30 @@ function love.update(dt)
 	local joystick = love.joystick.getJoysticks()[1]
 
 	-- temp input
-	local axisX = joystick:getGamepadAxis "leftx"
-	local axisY = joystick:getGamepadAxis "lefty"
+	local axisX, axisY = 0, 0
+	local dpup, dpdown, dpleft, dpright
 	local deadZone = 0.25
-	if love.keyboard.isScancodeDown "a" or joystick:isGamepadDown "dpleft" or axisX < -deadZone then
+
+	if joystick then
+		axisX = joystick:getGamepadAxis "leftx"
+		axisY = joystick:getGamepadAxis "lefty"
+		
+		dpleft = joystick:isGamepadDown "dpleft"
+		dpright = joystick:isGamepadDown "dpright"
+		dpup = joystick:isGamepadDown "dpup"
+		dpdown = joystick:isGamepadDown "dpdown"
+	end
+
+	if love.keyboard.isScancodeDown "a" or dpleft or axisX < -deadZone then
 		x = x - 1
 	end
-	if love.keyboard.isScancodeDown "d" or joystick:isGamepadDown "dpright" or axisX > deadZone then
+	if love.keyboard.isScancodeDown "d" or dpright or axisX > deadZone then
 		x = x + 1
 	end
-	if love.keyboard.isScancodeDown "w" or joystick:isGamepadDown "dpup" or axisY < -deadZone then
+	if love.keyboard.isScancodeDown "w" or dpup or axisY < -deadZone then
 		y = y - 1
 	end
-	if love.keyboard.isScancodeDown "s" or joystick:isGamepadDown "dpdown" or axisY > deadZone then
+	if love.keyboard.isScancodeDown "s" or dpdown or axisY > deadZone then
 		y = y + 1
 	end
 
