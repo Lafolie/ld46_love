@@ -16,7 +16,9 @@ local nativeWidth = 320;
 local nativeHeight = 240;
 
 local nativeCanvas = love.graphics.newCanvas(nativeWidth, nativeHeight)
-local windowScale = 1;
+local windowScale = 1
+local canvasx = 0
+local canvasy = 0
 
 function updateCanvasScale()
 	local w, h = love.graphics.getDimensions()
@@ -24,6 +26,10 @@ function updateCanvasScale()
 	local scaley = h / nativeHeight
 
 	canvasScale = math.min(scalex, scaley)
+
+	canvasx = (w - nativeWidth * canvasScale) * 0.5
+	print(w, nativeWidth * canvasScale, canvasx)
+	canvasy = (h - nativeHeight * canvasScale) * 0.5
 end
 
 -------------------------------------------------------------------------------
@@ -38,22 +44,30 @@ end
 
 function love.update(dt)
 	local x, y = 0, 0
+
+	local joystick = love.joystick.getJoysticks()[1]
+
 	-- temp input
-	if love.keyboard.isScancodeDown("a") then
-		x = x - 2
+	local axisX = joystick:getGamepadAxis "leftx"
+	local axisY = joystick:getGamepadAxis "lefty"
+	local deadZone = 0.25
+	if love.keyboard.isScancodeDown "a" or joystick:isGamepadDown "dpleft" or axisX < -deadZone then
+		x = x - 1
 	end
-	if love.keyboard.isScancodeDown("d") then
-		x = x + 2
+	if love.keyboard.isScancodeDown "d" or joystick:isGamepadDown "dpright" or axisX > deadZone then
+		x = x + 1
 	end
-	if love.keyboard.isScancodeDown("w") then
-		y = y - 2
+	if love.keyboard.isScancodeDown "w" or joystick:isGamepadDown "dpup" or axisY < -deadZone then
+		y = y - 1
 	end
-	if love.keyboard.isScancodeDown("s") then
-		y = y + 2
+	if love.keyboard.isScancodeDown "s" or joystick:isGamepadDown "dpdown" or axisY > deadZone then
+		y = y + 1
 	end
 
-	testActor.vx = x
-	testActor.vy = y
+	local velocity = vector(x, y):normalizeInplace()
+	velocity = velocity * 2
+	testActor.vx = velocity.x
+	testActor.vy = velocity.y
 
 	testActor:phys(testmap)
 	testActor:animate()
@@ -69,6 +83,7 @@ function love.draw()
 
 	-- scale the canvas to match the window scale
 	love.graphics.push()
+		love.graphics.translate(canvasx, canvasy)
 		love.graphics.scale(canvasScale)
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.draw(nativeCanvas, 0, 0)
@@ -139,6 +154,10 @@ end
 -------------------------------------------------------------------------------
 
 function love.joystickadded(joystick)
+
+end
+
+function love.joystickremoved(joystick)
 
 end
 

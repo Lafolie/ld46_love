@@ -27,7 +27,6 @@ Atlas = class
 			for x = 0, nx do
 				local quad = love.graphics.newQuad(x * size, y * size, size, size, w, h)
 				table.insert(quads, quad)
-				print("Added quad", y*nx + x)
 			end
 		end
 	end
