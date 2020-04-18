@@ -20,6 +20,7 @@ Actor = class
 		self.vy = 0
 		
 		-- graphics
+		self.color = {0.8, 0.1, 0.3, 1}
 		self.atlas = atlas
 		self.quad = 1
 		self.animFrame = 0
@@ -36,10 +37,10 @@ Actor = class
 	end,
 
 	draw = function(self)
-		-- love.graphics.setColor(1, 0.1, 0.5, 1)
-		-- love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+		-- love.graphics.setColor(1, 0.1, 0.5, 0.5)
+		-- love.graphics.rectangle("fill", floor(self.x), floor(self.y), self.width, self.height)
 		local atlas = self.atlas
-		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.setColor(self.color)
 		love.graphics.draw(atlas.img, atlas.quads[self.quad],  floor(self.x), floor(self.y))
 	end,
 
@@ -74,12 +75,12 @@ Actor = class
 		bottom = floor((y + h - 1) / tileSize)
 
 		for n = top, bottom do
-			if tiles[n][left] > 0 then
+			if tiles[n][left] < 8 then
 				x = left * tileSize + tileSize
 				vx = 0
 			end
 
-			if tiles[n][right] > 0 then
+			if tiles[n][right] < 8 then
 				x = right * tileSize - w
 				vx = 0
 			end
@@ -93,12 +94,12 @@ Actor = class
 		bottom = floor((y + h) / tileSize)
 
 		for n = left, right do
-			if tiles[top][n] > 0 then
+			if tiles[top][n] < 8 then
 				y = top * tileSize + tileSize
 				vy = 0
 			end
 
-			if tiles[bottom][n] > 0 then
+			if tiles[bottom][n] < 8 then
 				y = bottom * tileSize - h
 				vy = 0
 			end
