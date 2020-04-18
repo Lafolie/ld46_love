@@ -44,7 +44,9 @@ Tilemap = class
 			local row = self.map[y]
 			for x = 0, self.width - 1 do
 				local n = row[x]
-				batch:add(quads[n], tsize * x, tsize * y)
+				if n > 0 then
+					batch:add(quads[n], tsize * x, tsize * y)
+				end
 			end
 		end
 
@@ -52,6 +54,7 @@ Tilemap = class
 	end,
 
 	draw = function(self, x, y)
+		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.draw(self.batch, x, y)
 	end
 }

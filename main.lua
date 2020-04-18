@@ -6,6 +6,7 @@ class = require "lib.class"
 vector = require "lib.vector"
 
 require "class.tilemap"
+require "class.actor"
 
 -- set scaling rules
 love.graphics.setDefaultFilter("nearest", "nearest")
@@ -28,20 +29,42 @@ end
 -------------------------------------------------------------------------------
 -- GAME CALLBACKS
 -------------------------------------------------------------------------------
-local testmap
+local testmap, testActor
 function love.load()
 	updateCanvasScale()
 	testmap = Tilemap("maps/testmap.lua", Atlas("gfx/tiles.png", 16))
+	testActor = Actor(16, 16, 16, 16, Atlas("gfx/anim.png", 16))
 end
 
 function love.update(dt)
+	local x, y = 0, 0
+	-- temp input
+	if love.keyboard.isScancodeDown("a") then
+		x = x - 2
+	end
+	if love.keyboard.isScancodeDown("d") then
+		x = x + 2
+	end
+	if love.keyboard.isScancodeDown("w") then
+		y = y - 2
+	end
+	if love.keyboard.isScancodeDown("s") then
+		y = y + 2
+	end
 
+	testActor.vx = x
+	testActor.vy = y
+
+	testActor:phys(testmap)
+	testActor:animate()
 end
 
 function love.draw()
 	-- draw to the canvas
 	love.graphics.setCanvas(nativeCanvas)
+		love.graphics.clear()
 		testmap:draw(0, 0)
+		testActor:draw()
 	love.graphics.setCanvas()
 
 	-- scale the canvas to match the window scale
