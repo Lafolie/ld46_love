@@ -5,11 +5,29 @@
 class = require "lib.class"
 vector = require "lib.vector"
 
+-- set scaling rules
+love.graphics.setDefaultFilter("nearest", "nearest")
+
+-- native canvas setup
+local nativeWidth = 320;
+local nativeHeight = 240;
+
+local nativeCanvas = love.graphics.newCanvas(nativeWidth, nativeHeight)
+local windowScale = 1;
+
+function updateCanvasScale()
+	local w, h = love.graphics.getDimensions()
+	local scalex = w / nativeWidth
+	local scaley = h / nativeHeight
+
+	canvasScale = math.min(scalex, scaley)
+end
+
 -------------------------------------------------------------------------------
 -- GAME CALLBACKS
 -------------------------------------------------------------------------------
 function love.load()
-
+	updateCanvasScale()
 end
 
 function love.update(dt)
@@ -17,7 +35,16 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.push()
+		love.graphics.scale(canvasScale)
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.draw(nativeCanvas, 0, 0)
+	love.graphics.pop()
 
+	love.graphics.setColor(0, 0, 0, 0.8)
+	love.graphics.print(love.timer.getFPS(), 11, 11)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.print(love.timer.getFPS(), 10, 10)
 end
 
 function love.quit()
@@ -39,7 +66,7 @@ function love.mousefocus(hasFocus)
 end
 
 function love.resize(w, h)
-
+	updateCanvasScale()
 end
 
 -------------------------------------------------------------------------------
